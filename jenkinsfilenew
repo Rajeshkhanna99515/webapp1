@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone SCM') {
+            steps {
+                echo 'Cloning code from GitHub...'
+                git branch: 'main', url: 'https://github.com/Rajeshkhanna99515/webapp1.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building artifact with Maven tool...'
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                echo 'Deploying to Tomcat application server...'
+                deploy adapters: [tomcat9(
+                    credentialsId: 'tomcat',
+                    path: '',
+                    url: 'http://3.82.199.130:8080/'
+                )], contextPath: 'rajeshproject', war: '**/*.war'
+            }
+        }
+    }
+}
